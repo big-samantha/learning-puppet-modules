@@ -1,0 +1,56 @@
+ServerRoot "/etc/apache2"
+LockFile /var/lock/apache2/accept.lock
+PidFile ${APACHE_PID_FILE}
+Timeout 200
+KeepAlive On
+MaxKeepAliveRequests 100
+KeepAliveTimeout 15
+<IfModule mpm_prefork_module>
+    StartServers         10
+    MinSpareServers       5
+    MaxSpareServers      10
+    MaxClients           50
+    MaxRequestsPerChild 500
+</IfModule>
+<IfModule mpm_worker_module>
+    StartServers          2
+    MinSpareThreads      25
+    MaxSpareThreads      75 
+    ThreadLimit          64
+    ThreadsPerChild      25
+    MaxClients          150
+    MaxRequestsPerChild   0
+</IfModule>
+<IfModule mpm_event_module>
+    StartServers          2
+    MaxClients          150
+    MinSpareThreads      25
+    MaxSpareThreads      75 
+    ThreadLimit          64
+    ThreadsPerChild      25
+    MaxRequestsPerChild   0
+</IfModule>
+
+User ${APACHE_RUN_USER}
+Group ${APACHE_RUN_GROUP}
+AccessFileName .htaccess
+<Files ~ "^\.ht">
+    Order allow,deny
+    Deny from all
+    Satisfy all
+</Files>
+DefaultType text/plain
+HostnameLookups Off
+ErrorLog syslog:local1
+CustomLog "|/usr/bin/logger -t apache2 -i -p local6.notice" varnishcombined
+LogLevel warn
+Include /etc/apache2/mods-enabled/*.load
+Include /etc/apache2/mods-enabled/*.conf
+Include /etc/apache2/httpd.conf
+Include /etc/apache2/ports.conf
+LogFormat "%h %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" combined
+LogFormat "%{X-Forwarded-For}i %l %u %t \"%r\" %>s %O \"%{Referer}i\" \"%{User-Agent}i\"" varnishcombined
+ExtendedStatus On
+
+Include /etc/apache2/conf.d/
+Include /etc/apache2/sites-enabled/
