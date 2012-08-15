@@ -2,5 +2,5 @@ class apache2 {
   include
     'apache2::install',
     'apache2::config',
-    'apache2::service',
+    'apache2::service'
 }
