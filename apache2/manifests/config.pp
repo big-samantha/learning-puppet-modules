@@ -5,7 +5,7 @@ class apache2::config {
   file { 'apache2_config':
     ensure => file,
     source => "/etc/puppetlabs/puppet/modules/apache2/files/${conf_file}",
-    path   => $apache2_config_path,
+    path   => $conf_path,
     owner  => 'root',
     before => Class['apache2::service'],
   }
